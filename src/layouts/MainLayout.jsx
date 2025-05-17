@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
-; // adjust path if needed
-import background from '../assets/background.jpg'; // your background image
+import background from '../assets/background.jpg';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa';
@@ -52,7 +51,6 @@ const MainLayout = () => {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            display: 'none',
             flexDirection: 'column',
             gap: '5px',
           }}
@@ -160,13 +158,9 @@ const MainLayout = () => {
 
       {/* Responsive styles */}
       <style>{`
-        #hamburger-btn {
-          display: none;
-        }
-
         @media (max-width: 768px) {
           #hamburger-btn {
-            display: flex;
+            display: flex !important;
           }
           #nav-links {
             display: none !important;
