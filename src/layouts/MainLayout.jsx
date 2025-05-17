@@ -8,9 +8,21 @@ import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/f
 
 const MainLayout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Track window width to toggle mobile menu and hamburger
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) setMenuOpen(false);
+    };
+
+    handleResize(); // initial check
+    window.addEventListener('resize', handleResize);
+
     AOS.init({ duration: 800 });
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -20,13 +32,13 @@ const MainLayout = () => {
         display: 'flex',
         flexDirection: 'column',
         backgroundImage: `url(${background})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundSize: isMobile ? 'contain' : 'cover',
+        backgroundPosition: isMobile ? 'top center' : 'center',
         backgroundRepeat: 'no-repeat',
+        backgroundAttachment: isMobile ? 'scroll' : 'fixed',
         color: 'white',
       }}
     >
-      {/* Header */}
       <header
         style={{
           backgroundColor: 'rgba(47, 133, 90, 0.85)',
@@ -37,6 +49,7 @@ const MainLayout = () => {
           justifyContent: 'space-between',
           boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
           position: 'relative',
+          zIndex: 20,
         }}
       >
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'white' }}>
@@ -45,51 +58,63 @@ const MainLayout = () => {
         </Link>
 
         {/* Hamburger Button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            flexDirection: 'column',
-            gap: '5px',
-          }}
-          aria-label="Toggle menu"
-          id="hamburger-btn"
-        >
-          <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
-          <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
-          <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
-        </button>
-
-        {/* Navigation Links */}
-        <nav
-          style={{
-            display: 'flex',
-            gap: '20px',
-          }}
-          id="nav-links"
-        >
-          <ul
+        {isMobile && (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="hamburger-btn"
+            aria-label="Toggle menu"
             style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
               display: 'flex',
-              gap: '20px',
-              listStyle: 'none',
-              margin: 0,
-              padding: 0,
+              flexDirection: 'column',
+              gap: '5px',
+              zIndex: 25,
             }}
           >
-            <li><Link to="/" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Home</Link></li>
-            <li><Link to="/products" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Products</Link></li>
-            <li><Link to="/services" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Services</Link></li>
-            <li><Link to="/about" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>About</Link></li>
-            <li><Link to="/contact" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Contact</Link></li>
-          </ul>
-        </nav>
+            <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
+            <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
+            <span style={{ width: '25px', height: '3px', backgroundColor: 'white', borderRadius: '2px' }}></span>
+          </button>
+        )}
+
+        {/* Navigation Links */}
+        {!isMobile && (
+          <nav style={{ display: 'flex', gap: '20px' }}>
+            <ul style={{ display: 'flex', gap: '20px', listStyle: 'none', margin: 0, padding: 0 }}>
+              <li>
+                <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" style={{ color: 'white', textDecoration: 'none' }}>
+                  Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" style={{ color: 'white', textDecoration: 'none' }}>
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" style={{ color: 'white', textDecoration: 'none' }}>
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        )}
       </header>
 
       {/* Mobile menu */}
-      {menuOpen && (
+      {menuOpen && isMobile && (
         <nav
           style={{
             backgroundColor: 'rgba(47, 133, 90, 0.95)',
@@ -97,7 +122,7 @@ const MainLayout = () => {
             top: '60px',
             right: 0,
             left: 0,
-            zIndex: 10,
+            zIndex: 15,
             display: 'flex',
             justifyContent: 'center',
           }}
@@ -113,11 +138,31 @@ const MainLayout = () => {
               alignItems: 'center',
             }}
           >
-            <li><Link to="/" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Home</Link></li>
-            <li><Link to="/products" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Products</Link></li>
-            <li><Link to="/services" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Services</Link></li>
-            <li><Link to="/about" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>About</Link></li>
-            <li><Link to="/contact" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>Contact</Link></li>
+            <li>
+              <Link to="/" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/products" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                Products
+              </Link>
+            </li>
+            <li>
+              <Link to="/services" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                Services
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                About
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" style={{ color: 'white', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                Contact
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
@@ -140,7 +185,13 @@ const MainLayout = () => {
       {/* Footer */}
       <footer style={{ backgroundColor: '#2F855A', textAlign: 'center', padding: '20px 10px', color: 'white' }}>
         <div style={{ marginBottom: '10px' }}>
-          <a href="https://www.facebook.com/profile.php?id=61574780871853&locale=fr_FR" target="_blank" rel="noreferrer" aria-label="Facebook" style={{ margin: '0 10px', color: 'white' }}>
+          <a
+            href="https://www.facebook.com/profile.php?id=61574780871853&locale=fr_FR"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Facebook"
+            style={{ margin: '0 10px', color: 'white' }}
+          >
             <FaFacebookF size={24} />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter" style={{ margin: '0 10px', color: 'white' }}>
@@ -155,18 +206,6 @@ const MainLayout = () => {
         </div>
         © {new Date().getFullYear()} Phyto Safety. All rights reserved.
       </footer>
-
-      {/* Responsive styles */}
-      <style>{`
-        @media (max-width: 768px) {
-          #hamburger-btn {
-            display: flex !important;
-          }
-          #nav-links {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
